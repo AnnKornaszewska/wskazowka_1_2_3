@@ -1,0 +1,47 @@
+wskazówka 1
+
+Zacznij od edycji widoku. Dodaj nowy input tekstowy, a także zapisz przy nich nazwy pól:
+<form onSubmit={handleSubmit}>
+    Title: <input type="text" value={value} onChange={e => setValue(e.target.value)} />
+    Icon: <input type="text" />
+    <button>Add column</button>
+</form>
+
+Następnie musimy zadbać o to, aby wartość nowego inputu była dostępna w całej funkcji. 
+Jak wiemy, w przypadku Reacta, nie korzystamy z querySelector. 
+Zamiast tego w takiej sytuacji tworzymy po prostu nowy stan, który następnie “synchronizujemy” z odpowiednim elementem.
+
+Musimy więc stworzyć nowy stan i zadbać o to, aby nasz nowy input korzystał z niego przy ustawieniu value, 
+a także aktualizował go przy zmianie wartości (onChange) przez użytkownika. Zanim jednak to zrobimy, to zgodnie z 
+propozycją powyżej, proponujemy zmianę nazwy stanu value na title.
+
+const [title, setTitle] = useState('');
+const [icon, setIcon] = useState('');
+
+…
+
+Title: <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
+Icon: <input type="text" value={icon} onChange={e => setIcon(e.target.value)} />
+
+
+wskazówka 2
+
+W kolejnym kroku trzeba zabrać się za funkcję handleSubmit, 
+aby przekazywała obie informacje oraz zerowała po wszystkim oba pola:
+
+const handleSubmit = e => {
+    e.preventDefault();
+    props.action({ title: title, icon: icon });
+    setTitle('');
+    setIcon('');
+};
+
+
+wskazówka 3 
+
+Na końcu czas wykorzystać nową informację również w addColumn. W tej chwili ta funkcja otrzymuje bowiem już obie informacje, 
+ale wciąż wykorzystuje tylko jedną.
+
+const addColumn = newColumn => {
+    setColumns([...columns, { id: shortid(), title: newColumn.title, icon: newColumn.icon }]);
+};
